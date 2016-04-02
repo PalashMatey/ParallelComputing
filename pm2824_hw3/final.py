@@ -3,9 +3,11 @@ import time
 import pyopencl as cl
 import numpy as np
 import numpy.matlib
-
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
 # Selecting OpenCL platform.
-NAME = 'NVIDIA CUDA'
+#NAME = 'NVIDIA CUDA'
+NAME = 'Intel(R) Iris(TM) Graphics 6100'
 platforms = cl.get_platforms()
 devs = None
 for platform in platforms:
@@ -20,11 +22,11 @@ blocks = 25
 workgroup = 25
 range_taken = 10
 
-L = 300
-M = 300
-N = 300
-P = 400
-Q = 10
+L = 1000
+M = 1000
+N = 1000
+P = 1000
+Q = 1000
 
 # Generate random numbers for matrix values
 a = np.random.randint(0, range_taken, size = (L,M)).astype(np.float32)
@@ -95,7 +97,7 @@ __kernel void algo1(__global float* A, __global float* B, __global float* C, __g
 #We first load the tiles into the local memory using variables A_tile and B_tile. We add the column of C similar to the above example and store the result in B_tile.
 #The multiplication result is stored in the output matrix.
 kernel_3 = """
-#define TILE_WIDTH 25
+#TILE_WIDTH =  25;
 __kernel void algo2(__global float* A, __global float* B, __global float* C, __global float* output, const int L, const int M, const int N) {
 
 

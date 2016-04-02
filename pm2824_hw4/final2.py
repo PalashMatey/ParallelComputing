@@ -6,6 +6,8 @@ import time
 import pyopencl as cl
 import pyopencl.array
 import numpy as np
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
 #Basic Python Implementation
 def hist(x):
     bins = np.zeros(256, np.uint32)
@@ -13,27 +15,30 @@ def hist(x):
         bins[v] += 1
     return bins
 
-NAME = 'NVIDIA CUDA'
+#NAME = 'NVIDIA CUDA'
+#NAME = 'Apple'
+NAME = 'Intel(R) Iris(TM) Graphics 6100'
 platforms = cl.get_platforms()
 devs = None
 for platform in platforms:
     if platform.name == NAME:
         devs = platform.get_devices()
 
+print devs
 
 ctx = cl.Context(devs)
 queue = cl.CommandQueue(ctx)
 #vary l for different sizes
-l = 210
-P = 32
+l = 80
+P = 10
 R = P*2*l
 C = P*5*l
 N = R*C
 
-#img = np.random.randint(0, 255, N).astype(np.uint8).reshape(R, C)
+img = np.random.randint(0, 255, N).astype(np.uint8).reshape(R, C)
 
 
-img = np.memmap('/opt/data/random.dat', dtype=np.uint8, mode = 'r',shape=(R,C))
+#img = np.memmap('/opt/data/random.dat', dtype=np.uint8, mode = 'r',shape=(R,C))
 
 # Kernel implementation for the improved method.This uses temp variable in local memory and then uses an shift which is local_size*no of groups.
 #The barrier to local memory fence makes sure that the operation is first carried out. Atomic operations are used when multiple threads modify the same data
@@ -78,9 +83,9 @@ __kernel void func(__global unsigned char *img, __global unsigned int *bins,
 
 #Uncomment the lines below to get python execution time
 
-#start = time.time()
-#h_py = hist(img)
-#time_python = time.time() - start
+start = time.time()
+h_py = hist(img)
+time_python = time.time() - start
 #print h_py
 #Using Atomic Increment Function gives a slightly better computation time 
 kernel_2 = """
@@ -137,7 +142,7 @@ print bin_histo2
 
 print "The size of the Image is 				  : ", N
 print "The size of the image is : 					%d Mb" 	     %(N/1000000)
-#print "Python  Algorithm and Implemented Algorithm Comparison     : ", np.allclose(h_py, bin_basic)
+print "Python  Algorithm and Implemented Algorithm Comparison     : ", np.allclose(h_py, bin_basic)
 print "Given Algorithm and Implemented algorithm Matrix comparison: ", np.allclose(bin_basic, bin_histo1)
 print "Given Algorithm and Atomic Increment algo Matrix comparison: ", np.allclose(bin_basic, bin_histo2)
 
@@ -177,7 +182,7 @@ for i in range(M):
     var3 = prg.histo2(queue, (N, ), (256, ), img_gpu.data, new_bin2.data, np.uint32(N))
     times.append(time.time() - start)
 time_histo2 = np.average(times)
-#print "Python Execution Time:      ", time_python
+print "Python Execution Time:      ", time_python
 print "Given Algorithm Time:            ", time_basic
 print "Implemented Algorithm Time:      ", time_histo1
 print "Atomic Increment Algorithm Time: ", time_histo2

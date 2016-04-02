@@ -20,9 +20,9 @@ ctx = cl.Context(devs)
 queue = cl.CommandQueue(ctx)
 
 #Defining Values for L,M & N. Change these to observe change in Execution times.
-L=50
-M=40
-N=60
+L=1000
+M=1000
+N=1000
 max = 10
 #Generating the Two matrices. Making sure they consist of complex numbers.
 x = np.random.randint(0, max, size = (L,M)).astype(np.complex64) + 1j*np.random.randint(0, max, size = (L,M)).astype(np.complex64)
@@ -30,8 +30,8 @@ c = np.random.randint(0, max, size = (M,N)).astype(np.complex64) + 1j*np.random.
 #Getting the python multiplication output.
 py_val = np.dot(x,c)
 
-print x
-print c
+#print x
+#print c
 #Defining the Kernel for Basic Matrix Multiplication
 kernel1 = """
 #include <pyopencl-complex.h>
@@ -133,6 +133,7 @@ print 'PyopenCL matrix multiply Optimization 2 and python are equal:        ', n
 #Execution time
 
 M=3
+'''
 times = []
 for i in xrange(M):
 	start = time.time()
@@ -140,7 +141,7 @@ for i in xrange(M):
 	times.append(time.time()-start)
 times_py = np.average(times)
 print 'python time:               ', times_py
-
+'''
 
 M=3
 times = []
@@ -173,167 +174,3 @@ times3 = np.average(times)
 print 'OpenCL Optimization 2 time:', times3
 
 
-#Plotting Functions
-val = True
-def plotfunctions(MAKE_PLOT) :
-	import matplotlib as mpl
-	mpl.use('agg')
-	import matplotlib.pyplot as plt
-	if MAKE_PLOT == True :
-		
-
-
-
-
-
-
-
-		elements = []
-		times = []
-                prg = cl.Program(ctx, kernel2).build()
-                L = 1
-                M = 2
-                N = 400
-                #Keeping N constant and varying L and M in the ratio of 1:2 for Basic Matrix Multiplication
-                while L < N and M < N :
-                        elements.append(L*M)
-                        start = time.time()
-                        prg.matmul2(queue, (L, N), None, x_buf, c_buf, c2_buf, np.int32(L), np.int32(M), np.int32(N))
-                        times.append(time.time() - start)
-			time2 = np.average(times)
-			
-			
-			#print "Optimization 1 time for  L(%d) * M(%d)   * N(%d)  %f" %(L,M,N,time2)
-                        L = L + 20
-                        M = L*2
-                plt.figure(1)
-                plt.gcf()
-                plt.plot(elements, times, 'g')
-                plt.xlabel('Matrix X for Optimization 1')
-                plt.ylabel('  Time Taken  ')
-                plt.gca().set_ylim((0.00006, 0.00025))
-                plt.savefig('plot-optimized 1.png')
-
-
-		elements = []
-                times = []
-                prg = cl.Program(ctx, kernel2).build()
-                L = 400
-                M = 1
-                N = 2
-                #Keeping L constant and varying M and N in the ratio of 1:2 for Basic Matrix Multiplication
-                while M < L and N < L :
-                        elements.append(N*M)
-                        start = time.time()
-                        prg.matmul2(queue, (L, N), None, x_buf, c_buf, c2_buf, np.int32(L), np.int32(M), np.int32(N))
-                        times.append(time.time() - start)
-			times_c2 = np.average(times)
-                        #print "Optimization 1 time   M(%d) * N(%d)   *  L(%d)    %f" %(M,N,L,times_c2)
-                        M = M + 20
-                        N = M*2
-                plt.figure(2)
-                plt.gcf()
-                plt.plot(elements, times,'g')
-                plt.xlabel('Matrix C for Optimization 1 ')
-                plt.ylabel('Time Taken')
-                plt.gca().set_ylim((0.00006, 0.00025))
-                plt.savefig('plot-optimized_1.png')
-
-		elements = []
-                times = []
-                L = 1
-                M = 2
-                N = 400
-                #Keeping N constant and varying L and M in the ratio of 1:2 for Basic Matrix Multiplication
-                while L < N and M < N :
-                        elements.append(L*M)
-                        start = time.time()
-                        py_val2 = np.dot(x,c)
-                        times.append(time.time() - start)
-                        times_py1 = np.average(times)
-			#print "Python Execution time L(%d) * M(%d)  *  N(%d) %f" %(L,M,N,times_py1)
-                        L = L + 20
-                        M = L*2
-                plt.figure(1)
-                plt.gcf()
-                plt.plot(elements, times,'r')
-                plt.xlabel('Matrix X for Python')
-                plt.ylabel('Time Taken')
-                plt.gca().set_ylim((0.00006, 0.00025))
-                plt.savefig('plot-basic1.png')
-
-
-		elements = []
-                times = []
-                prg = cl.Program(ctx, kernel3).build()
-                L = 1
-                M = 2
-                N = 400
-                #Keeping N constant and varying L and M in the ratio of 1:2 for Basic Matrix Multiplication
-                while L < N and M < N :
-                        elements.append(L*M)
-                        start = time.time()
-                        prg.matmul3(queue, (L, N), None, x_buf, c_buf, c3_buf, np.int32(L), np.int32(M), np.int32(N))
-                        times.append(time.time() - start)
-                        L = L + 20
-                        M = L*2
-			time3 = np.average(times)
-			
-			#print "Optimizatoin 2 time for L(%d) * M(%d)  * N(%d)  %f" %(L,M,N,time3)	
-	        plt.figure(1)
-        	plt.gcf()
-                plt.plot(elements, times,'k')
-                plt.xlabel('Matrix X for Optimization 2')
-                plt.ylabel('  Time Taken  ')
-                plt.gca().set_ylim((0.00006, 0.00025))
-                plt.savefig('plot-optimized 2.png')
-
-		elements = []
-                times = []
-                L = 400
-                M = 1
-                N = 2
-                #Keeping L constant and varying M and N in the ratio of 1:2 for Basic Matrix Multiplication
-                while M < L and N < L :
-                        elements.append(N*M)
-                        start = time.time()
-                        py_val3 = np.dot(x,c)
-                        times.append(time.time() - start)
-                        times_py2 = np.average(times)
-                        #print "Python Execution time M(%d) * N(%d) * L(%d) %f" %(M,N,L,times_py2)
-                        M = M + 20
-                        N = M*2
-                plt.figure(2)
-                plt.gcf()
-                plt.plot(elements, times,'r')
-                plt.xlabel('Matrix C for Python')
-                plt.ylabel('Time Taken')
-                plt.gca().set_ylim((0.00001, 0.00100))
-                plt.savefig('plot-basic2.png')
-
-		elements = []
-                times = []
-                prg = cl.Program(ctx, kernel3).build()
-                L = 400
-                M = 1
-                N = 2
-                #Keeping L constant and varying M and N in the ratio of 1:2 for Basic Matrix Multiplication
-                while M < L and N < L :
-                        elements.append(N*M)
-                        start = time.time()
-                        prg.matmul3(queue, (L, N), None, x_buf, c_buf, c3_buf, np.int32(L), np.int32(M), np.int32(N))
-                        times.append(time.time() - start)
-			times_c3 = np.average(times)
-                        #print "Optimization 2 time M %d * N(%d)  * L(%d)  %f" %(M,N,L,times_c3)
-                        M = M + 20
-                        N = M*2
-                plt.figure(2)
-                plt.gcf()
-                plt.plot(elements, times,'k')
-                plt.xlabel('Matrix C for Optimized 2')
-                plt.ylabel('Time Taken')
-                plt.gca().set_ylim((0.00006, 0.00025))
-                plt.savefig('plot-optimized_2.png')
-
-
-plotfunctions(val)

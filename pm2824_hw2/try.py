@@ -190,59 +190,6 @@ def plotfunctions(MAKE_PLOT) :
 
 		elements = []
 		times = []
-		prg=cl.Program(ctx,kernel1).build()
-		L = 1
-		M = 2
-		N = 400
-		#Keeping N constant and varying L and M in the ratio of 1:2 for Basic Matrix Multiplication
-		while L < N and M < N :
-			elements.append(L*M)
-			start = time.time()
-			prg.matmul1(queue, (L, N), None, x_buf, c_buf, c1_buf, np.int32(L), np.int32(M), np.int32(N))
-			times.append(time.time() - start)
-			times1 = np.average(times)
-			
-			 
-			#print "Basic Execution time  L(%d) *M(%d)   *  N(%d)   %f" %(L,M,N,times1)
-			L = L + 20
-			M = L*2
-		plt.figure(1)
-		plt.gcf()
-		plt.plot(elements, times,'b')
-		plt.xlabel('Matrix X for Basic')
-		plt.ylabel('Time Taken')
-		plt.gca().set_ylim((0.00006, 0.00025))
-		plt.savefig('plot-basic1.png')
-
-
-		elements = []
-                times = []
-                prg = cl.Program(ctx, kernel1).build()
-                L = 400
-                M = 1
-                N = 2
-                #Keeping L constant and varying M and N in the ratio of 1:2 for Basic Matrix Multiplication
-                while M < L and N < L :
-                        elements.append(N*M)
-                        start = time.time()
-                        prg.matmul1(queue, (L, N), None, x_buf, c_buf, c1_buf, np.int32(L), np.int32(M), np.int32(N))
-                        times.append(time.time() - start)
-			times_c1 = np.average(times)
-			#print "Basic Execution time  M(%d) * N(%d)   *  L(%d)    %f" %(M,N,L,times_c1)
-                        M = M + 20
-                        N = M*2
-                plt.figure(2)
-                plt.gcf()
-                plt.plot(elements, times,'b')
-                plt.xlabel('Matrix C for Basic')
-                plt.ylabel('Time Taken')
-                plt.gca().set_ylim((0.00006, 0.00025))
-                plt.savefig('plot-basic2.png')
-
-
-
-		elements = []
-                times = []
                 prg = cl.Program(ctx, kernel2).build()
                 L = 1
                 M = 2

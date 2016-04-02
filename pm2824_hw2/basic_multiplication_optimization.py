@@ -20,9 +20,9 @@ ctx = cl.Context(devs)
 queue = cl.CommandQueue(ctx)
 
 #Defining Values for L,M & N. Change these to observe change in Execution times.
-L=50
-M=40
-N=60
+L=200
+M=160
+N=240
 max = 10
 #Generating the Two matrices. Making sure they consist of complex numbers.
 x = np.random.randint(0, max, size = (L,M)).astype(np.complex64) + 1j*np.random.randint(0, max, size = (L,M)).astype(np.complex64)

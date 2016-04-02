@@ -3,14 +3,9 @@ import time
 import pyopencl as cl
 import numpy as np
 import numpy.matlib
-import os
-os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
 # Selecting OpenCL platform.
-
-
-
 NAME = 'NVIDIA CUDA'
-#NAME = 'Intel(R) Iris(TM) Graphics 6100'
 platforms = cl.get_platforms()
 devs = None
 for platform in platforms:
@@ -24,8 +19,7 @@ queue = cl.CommandQueue(ctx)
 blocks = 25
 workgroup = 25
 range_taken = 10
-
-d = 10
+d = 100
 L= 10*d
 M = 10*d
 N = 10*d
@@ -106,7 +100,7 @@ __kernel void algo1(__global float* A, __global float* B, __global float* C, __g
 #We first load the tiles into the local memory using variables A_tile and B_tile. We add the column of C similar to the above example and store the result in B_tile.
 #The multiplication result is stored in the output matrix.
 kernel_3 = """
-#define TILE_WIDTH =  25;
+#define TILE_WIDTH 25
 __kernel void algo2(__global float* A, __global float* B, __global float* C, __global float* output, const int L, const int M, const int N) {
 
 
@@ -170,16 +164,16 @@ cl.enqueue_copy(queue, out3, out3_buf)
 
 
 # Print values of all  matrices and compare
-print '\nCPU(Python) Matrix Multiplication :  ', py_val
-print '\nCPU(Python) Matrix Transpose :\n       ', py_val1
-print '\nOpencl(GPU) Matrix Multiplication Algorithm 1 :', out1
-print '\nOpencl(GPU) Matrix Multiplication Algorithm 2 :', out2
-print '\nOpencl(GPU) Matrix Transpose  Algorithm 1\n     :', out3
+print '\nNumpy Matrix Multiplication :  ', py_val
+print '\nNumpy Matrix Transpose :\n       ', py_val1
+print '\nOpencl Matrix Multiplication Algorithm 1 :', out1
+print '\nOpencl Matrix Multiplication Algorithm 2 :', out2
+print '\nOpencl Matrix Transpose  Algorithm 1\n     :', out3
 
 # Compare the calculated values for algorithms and numpy
-print 'OpenCL(GPU) matrix multiply optimization  algorithm 1 and Python(CPU) are equal:        ', np.allclose(py_val, out1)
-print 'OpenCL(GPU) matrix multiply optimization  algorithm 2 and Python(CPU) are equal:        ', np.allclose(py_val, out2)
-print 'OpenCL(GPU) matrix transpose optimization algorithm 1 and Python(CPU) are equal:        ', np.allclose(py_val1, out3)
+print 'OpenCL matrix multiply optimization  algorithm 1 and numpy are equal:        ', np.allclose(py_val, out1)
+print 'OpenCL matrix multiply optimization  algorithm 2 and numpy are equal:        ', np.allclose(py_val, out2)
+print 'OpenCL matrix transpose optimization algorithm 1 and numpy are equal:        ', np.allclose(py_val1, out3)
 
 
 M = 3
@@ -210,7 +204,7 @@ for i in xrange(M):
 	prg.algo1(queue, (L, ), (L/workgroup, ), a_buf, b_buf, c_buf, out1_buf, np.int32(L), np.int32(M), np.int32(N))
 	times.append(time.time()-start)
 times1 = np.average(times)
-print 'OpenCL(GPU) Algorithm-1 time:  ', times1
+print 'OpenCL Algorithm-1 time:  ', times1
 
 # Measure time taken by Algorithm 2
 prg = cl.Program(ctx, kernel_3).build()
@@ -220,7 +214,7 @@ for i in xrange(M):
 	prg.algo2(queue, (L,N), (blocks,blocks), a_buf, b_buf, c_buf, out2_buf, np.int32(L), np.int32(M), np.int32(N))
 	times.append(time.time()-start)
 times2 = np.average(times)
-print 'OpenCL(GPU) Algorithm-2 time:  ', times2
+print 'OpenCL Algorithm-2 time:  ', times2
 
 #Measure time taken by Transpose Algorithm 1
 
@@ -231,8 +225,9 @@ for i in xrange(M):
 	prg.transpose1(queue, d.shape,None, d_buf,  out3_buf, np.int32(P), np.int32(Q))
         times.append(time.time()-start)
 times3 = np.average(times)
-print 'OpenCL(GPU) Transpose-Algorithm time: ', times3
+print 'OpenCL Transpose-Algorithm time: ', times3
 
 #Plotting Functions
 
 #Plotted in Excel
+

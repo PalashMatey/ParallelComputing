@@ -5,8 +5,8 @@ import numpy as np
 
 import os
 os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
-#NAME = 'NVIDIA CUDA'
-NAME = 'Intel(R) Iris(TM) Graphics 6100'
+NAME = 'NVIDIA CUDA'
+#NAME = 'Intel(R) Iris(TM) Graphics 6100'
 platforms = cl.get_platforms()
 devs = None
 for platform in platforms:
@@ -172,8 +172,8 @@ print 'OpenCL Optimization 2 time:', times3
 
 
 #Plotting Functions
-val = FALSE
-'''
+val = True
+
 def plotfunctions(MAKE_PLOT) :
 	import matplotlib as mpl
 	mpl.use('agg')
@@ -389,4 +389,3 @@ def plotfunctions(MAKE_PLOT) :
 
 
 plotfunctions(val)
-'''

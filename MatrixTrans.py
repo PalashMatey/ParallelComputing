@@ -36,12 +36,12 @@ func0.set_scalar_arg_dtypes([None, None, np.uint32, np.uint32])
 def trans_naive(a_buf, atrans_buf, H_A, W_A):
     start = time.time()
     func0(queue, (W_A, H_A), None, a_buf, atrans_buf, np.uint32(H_A), np.uint32(W_A))
-        return time.time()-start
+    return time.time()-start
 
 def cl_naive_trans(a,a_trans,HA,WA):
     a_buf, atrans0_buf = mem_alloc(a, a_trans)
-        t=trans_naive(a_buf,atrans0_buf, HA, WA)
-        a_trans0=mem_transfer(a_trans,atrans0_buf)
+    t=trans_naive(a_buf,atrans0_buf, HA, WA)
+    a_trans0=mem_transfer(a_trans,atrans0_buf)
     return t, a_trans0
 
 ###func1: Row Optimisation (All Global)###
@@ -72,7 +72,7 @@ def cl_row_opt_trans(a,a_trans,HA,WA):
         a_buf, atrans1_buf = mem_alloc(a, a_trans)
         t=trans_row_opt(a_buf,atrans1_buf, HA, WA)
         a_trans1=mem_transfer(a_trans,atrans1_buf)
-    return t, a_trans1
+        return t, a_trans1
 
 """ """
 
@@ -132,7 +132,7 @@ def cl_row_opt_time(HA, WA, M=4):
                 times.append(t)
                 atrans=mem_transfer(atrans,atrans_buf)
         #print 'opencl row_opt time:  ', np.average(times)
-    return np.average(times)
+        return np.average(times)
 
 
 

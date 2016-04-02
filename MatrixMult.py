@@ -110,14 +110,14 @@ def cl_op_mult_tiling(a,b,d,siz,m,n,p):
 def create_arrays(size):
 	A=np.random.random((size,size)).astype(np.float32)
 	B=np.random.random((size,size)).astype(np.float32)
-	#C=np.random.random((size,size)).astype(np.float32)
+	C=np.random.random((size,size)).astype(np.float32)
 	D=np.zeros((size,size)).astype(np.float32)
 	return A, B, D
 
 def create_arrays_2(m,n,p):
 	A=np.random.random((m,n)).astype(np.float32)
         B=np.random.random((n,p)).astype(np.float32)
-        #C=np.random.random((n,p)).astype(np.float32)
+        C=np.random.random((n,p)).astype(np.float32)
         D=np.zeros((m,p)).astype(np.float32)
         return A, B, D
 
@@ -126,7 +126,7 @@ def mem_alloc(A, B, D):
 	mf=cl.mem_flags								#MEMORY_FLAG allocation
 	a_buf=cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=A)
 	b_buf=cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=B)
-	#c_buf=cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=C)
+	c_buf=cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=C)
 	d_buf=cl.Buffer(ctx, mf.WRITE_ONLY, D.nbytes)
 	init_arr=np.zeros(D.shape).astype(np.float32)
 	cl.enqueue_copy(queue,d_buf,init_arr)				#Initializing the Memory of the Output Buffers 
